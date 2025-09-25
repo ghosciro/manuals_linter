@@ -1,4 +1,4 @@
-resources/*
-!resources/
-results/*
-!results/
+.obsidian/
+results/
+resources/
+.smart-env/
