@@ -71,6 +71,36 @@ class pdf_extractor:
                 os.makedirs(dir_name)           
 
     def make_files(self,results_path=None):
+        def formatted_string(word_dict,word,size,filename=""):
+            word=word.strip()
+            if len(word)<2:
+                return word
+            if size > 20:
+                if word not in word_dict.keys():
+                    word_dict[word]=file_name
+                    return f"### [[{word}]]\n"
+                else:
+                    return f"### [[{word_dict[word]}#{word}]]\n"
+            elif size > 15:
+                if word not in word_dict.keys():
+                    word_dict[word]=file_name
+                    return f"## [[{word}]]\n"
+                else:
+                    return f"## [[{word_dict[word]}#{word}]]\n"
+            elif size > 10:
+                if word not in word_dict.keys():
+                    word_dict[word]=file_name
+                    return f"# [[{word}]]\n"
+                else:
+                    return f"# [[{word_dict[word]}#{word}]]\n"
+            else:
+                if word in word_dict.keys():
+                    return f"[[{word}]] "
+                else:
+                    return f"{word} "
+
+            
+
         if results_path is None:
             results_path=self.results_path
         '''
@@ -85,6 +115,7 @@ class pdf_extractor:
         None
         ---------------------------------------------------------------------------
         '''
+        Important_words={}
         for element in self.outlines.keys():
             for subelement in self.outlines[element].keys():
                 file_name=f"{results_path}/{element.replace(' ', '_')}/{subelement.replace(' ', '_')}.md"
@@ -94,25 +125,19 @@ class pdf_extractor:
                     f.write(f"page:{self.outlines[element][subelement]}\n\n")
                     for page_number in range(self.outlines[element][subelement][1],self.outlines[element][subelement][0]-1):
                         page = self.document.load_page(page_number)
-                        f.write(f"## Page {page_number+1}\n\n")
-                        for block in page.get_text("dict")["blocks"]:
+                        f.write(f"**Page {page_number+1}**\n\n")
+                        for block in page.get_text("dict")["blocks"]: #type: ignore
                             if block["type"] != 0:  # solo testo
                                 continue
                             for line in block["lines"]:
                                 for span in line["spans"]:
                                     text = span["text"]
                                     text = "".join([char for char in text if char.isalpha() or char.isnumeric() or " " in char ]) # rimuovi caratteri non ASCII
-                                    size = span["size"]  # dimensione del font
+                                    size = span["size"]  # dimensione del font    
                                     if len(text)>1:  # salta stringhe vuote
-                                        if size >= 20:  # titolo principale
-                                            f.write(f"\n\n# {text}\n\n")
-                                        elif 15 <= size < 20:  # sottotitolo
-                                            f.write(f"\n## {text}\n")
-                                        elif 14 <= size < 15 or text.isupper():  # sottotitolo minore
-                                            f.write(f"\n#### {text}\n")
-                                        else:  # testo normale
-                                            f.write(f"{text}")
-
+                                        formatted_text = formatted_string(Important_words,text,size,file_name)
+                                        f.write(formatted_text)
+                                        f.write(" ")
                 f.close()
 
 if __name__ == "__main__":
