@@ -27,6 +27,8 @@ set(MY_LIBS
     ${POPPLER_LIBRARIES}
 )
 
+file(GLOB SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+target_sources(manuals_linter PRIVATE ${SRC_FILES})
 # Applica include e link
 target_include_directories(manuals_linter PRIVATE ${MY_INCLUDES})
 target_link_libraries(manuals_linter PRIVATE ${MY_LIBS})
