@@ -99,8 +99,6 @@ class pdf_extractor:
                 else:
                     return f"{word} "
 
-            
-
         if results_path is None:
             results_path=self.results_path
         '''

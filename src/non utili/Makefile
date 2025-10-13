@@ -60,7 +60,7 @@ EQUALS = =
 CMAKE_SOURCE_DIR = /home/dennis/progetti/manuals_linter/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/dennis/progetti/manuals_linter/src/build
+CMAKE_BINARY_DIR = /home/dennis/progetti/manuals_linter/src
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,9 +87,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/dennis/progetti/manuals_linter/src/build/CMakeFiles /home/dennis/progetti/manuals_linter/src/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/dennis/progetti/manuals_linter/src/CMakeFiles /home/dennis/progetti/manuals_linter/src//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/dennis/progetti/manuals_linter/src/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/dennis/progetti/manuals_linter/src/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -153,6 +153,30 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/manuals_linter.dir/build.make CMakeFiles/manuals_linter.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+personal_outline.o: personal_outline.cpp.o
+.PHONY : personal_outline.o
+
+# target to build an object file
+personal_outline.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/manuals_linter.dir/build.make CMakeFiles/manuals_linter.dir/personal_outline.cpp.o
+.PHONY : personal_outline.cpp.o
+
+personal_outline.i: personal_outline.cpp.i
+.PHONY : personal_outline.i
+
+# target to preprocess a source file
+personal_outline.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/manuals_linter.dir/build.make CMakeFiles/manuals_linter.dir/personal_outline.cpp.i
+.PHONY : personal_outline.cpp.i
+
+personal_outline.s: personal_outline.cpp.s
+.PHONY : personal_outline.s
+
+# target to generate assembly for a file
+personal_outline.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/manuals_linter.dir/build.make CMakeFiles/manuals_linter.dir/personal_outline.cpp.s
+.PHONY : personal_outline.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -165,6 +189,9 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... personal_outline.o"
+	@echo "... personal_outline.i"
+	@echo "... personal_outline.s"
 .PHONY : help
 
 

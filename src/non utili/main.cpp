@@ -18,6 +18,7 @@ int main() {
     else {
         cout << "Sommario trovato:" << endl;
         PersonalOutline personalOutline = PersonalOutline::qt5OutlinerToMine(outline);
+        personalOutline.Print_outline();
     }
     delete doc;
     return 0;
