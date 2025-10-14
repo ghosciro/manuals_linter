@@ -13,76 +13,56 @@ def apri_pagina_html(url):
 # print(html)
 
 
+
+
 def download_and_save(link):
-    url = base_url + str(link)
-    fileplace = link.strip('/').replace('/', '')
+    fileplace = link.replace("https://dnd5e.wikidot.com","")
     folder=fileplace.split(':')[0]
     filename=fileplace.split(':')[-1]
     os.makedirs(f'pages/{folder}', exist_ok=True)
     filepath = f'pages/{folder}/{filename}.md'
     try:
-        html = apri_pagina_html(url)
-
-        #cerca se ci sono href nel file
-        
-
-
+        html = apri_pagina_html(link)
         soup = BeautifulSoup(html, 'html.parser')
-        # Estrai tutte le tabelle
-        tables=[]
-        for table in soup.find_all('table'):
-              table_title=
-              # Rimuovi la tabella dal contenuto
+        markdown=""
 
-        # Semplice conversione in markdown: titoli,paragrafi,liste e tabelle
-        markdown = ""
-        for element in soup.body.descendants:
-            if element.name == 'h1':
-                markdown += f"# {element.get_text(strip=True)}\n\n"
-            elif element.name == 'h2':
-                markdown += f"## {element.get_text(strip=True)}\n\n"
-            elif element.name == 'h3':
-                markdown += f"### {element.get_text(strip=True)}\n\n"
-            elif element.name == 'ul':
-                for li in element.find_all('li', recursive=False):
-                    markdown += f"- {li.get_text(strip=True)}\n"
-                markdown += "\n"
-            elif element.name == 'ol':
-                for idx, li in enumerate(element.find_all('li', recursive=False), 1):
-                    markdown += f"{idx}. {li.get_text(strip=True)}\n"
-                markdown += "\n"
-            elif element.name == 'table':
-                rows = element.find_all('tr')
-                for i, row in enumerate(rows):
-                    cols = [col.get_text(strip=True) for col in row.find_all(['th', 'td'])]
-                    markdown += "| " + " | ".join(cols) + " |\n"
-                    if i == 0:
-                        markdown += "| " + " | ".join(['---'] * len(cols)) + " |\n"
-                markdown += "\n"
-            elif element.name == 'p':
-                markdown += f"{element.get_text(strip=True)}\n\n"
-
-        #remove Create a Page part
-        markdown= markdown.split("Create a Page")[:1]
+        containers=soup.find_all(class_=["yui-navset","yui-navset-top"])
+        if containers:
+            for container in containers:
+                title_list=container.find(class_="yui-nav").get_text().strip().split("\n")
+                tables=container.find_all(class_="wiki-content-table")
+                for i, table in enumerate(tables):
+                    title = title_list[i] if i < len(title_list) else f"Table {i+1}"
+                    markdown += f"## {title}\n\n"
+                    # Convert HTML table to Markdown
+                    headers = [th.get_text(strip=True) for th in table.find_all('th')]
+                    if headers:
+                        markdown += "| " + " | ".join(headers) + " |\n"
+                        markdown += "| " + " | ".join(['---'] * len(headers)) + " |\n"
+                    rows = table.find_all('tr')
+                    for row in rows[1:] if headers else rows:
+                        cols = [td.get_text(strip=True) for td in row.find_all(['td', 'th'])]
+                        if cols:
+                            markdown += "| " + " | ".join(cols) + " |\n"
         with open(filepath, 'w', encoding='utf-8') as f:
             f.write(markdown)
     except Exception as e:
-        print(f"Errore nel download di {url}: {e}")
+        print(f"Errore nel download di {link}: {e}")
 
 
 if __name__ == "__main__":
-    base_url = "https://dnd5e.wikidot.com"
-    html = apri_pagina_html(base_url)
-    #estrapola tutti i hlink
-    soup = BeautifulSoup(html, 'html.parser')
-    links = soup.find_all('a')
-    links = [link.get('href') for link in links if link.get('href') and link.get('href').startswith('/')]
-    links = list(set(links))  # Rimuovi duplicati
-    links=links
-    #prima crea una pagina per ogni link
+        base_url = "https://dnd5e.wikidot.com"
+        html = apri_pagina_html(base_url)
+        #estrapola tutti i hlink
+        soup = BeautifulSoup(html, 'html.parser')
+        links = soup.find_all('a')
+        links = [base_url+link.get('href') for link in links if link.get('href') and link.get('href').startswith('/')]
+        links = list(set(links))  # Rimuovi duplicati
+        links=links
+        #prima crea una pagina per ogni link
 
-    os.makedirs('pages', exist_ok=True)
-    with concurrent.futures.ThreadPoolExecutor(max_workers=12) as executor:
-        executor.map(download_and_save, links)
-
+        os.makedirs('pages', exist_ok=True)
+        with concurrent.futures.ThreadPoolExecutor(max_workers=12) as executor:
+            executor.map(download_and_save, links)
+#download_and_save("https://dnd5e.wikidot.com/spells")
 # Funzione per aprire una pagina HTML e restituirne il contenuto
